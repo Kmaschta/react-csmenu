@@ -14,15 +14,24 @@ const CSMenu = React.createClass({
 		this.height = childNode.offsetHeight;
 	},
 
-	handleClick(evt) {
-		this.setState(oldState => ({ opened: !oldState.opened }));
+	open() {
+		if (!this.state.opened) {
+			this.setState({ opened: true });
+		}
+	},
+
+	close() {
+		if (this.state.opened) {
+			this.setState({ opened: false });
+		}
 	},
 
 	renderOpened() {
-		const { size } = this.props;
+		const { size, items } = this.props;
 
 		return (<svg style={styles.svg} width={this.width} height={this.height}>
-			<circle style={styles.circle(size)} />
+			<text x="50%" y="50%" style={styles.cancel} onClick={this.close}>Cancel</text>
+			{items.map((item, i) => <circle key={i} style={styles.circle(size, items.length, i)} onClick={(evt) =>{evt.preventDefault(); console.log(item);}} />)}
 		</svg>);
 	},
 
@@ -31,11 +40,15 @@ const CSMenu = React.createClass({
 	},
 
 	render() {
-		if (React.Children.count(this.props.children) > 1) {
-			throw Error('Too many children');
+		if (this.props.items.length < 1) {
+			throw new Error('CSMenu: Not enought items');
 		}
 
-		return (<div onClick={this.handleClick} style={styles.wrapper}>
+		if (React.Children.count(this.props.children) > 1) {
+			throw new Error('CSMenu: Too many children');
+		}
+
+		return (<div onClick={this.open} style={styles.wrapper}>
 			{this.state.opened ? this.renderOpened() : this.renderClosed()}
 		</div>);
 	},
@@ -43,12 +56,12 @@ const CSMenu = React.createClass({
 
 CSMenu.propTypes = {
 	children: React.PropTypes.element.isRequired,
-	items: React.PropTypes.arrayOf(React.PropTypes.string),
+	items: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
 	size: React.PropTypes.number,
 };
 
 CSMenu.defaultProps = {
-	size: 300,
+	size: 200,
 };
 
 export default CSMenu;
