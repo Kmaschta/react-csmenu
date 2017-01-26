@@ -6,7 +6,7 @@ const App = React.createClass({
 	render () {
 		return (
 			<div className={'container'}>
-				<CSMenu items={['Item 1', 'Item 2', 'Item 3']}>
+				<CSMenu items={['Item 1', 'Item 2', 'Item 3', 'Item 4']}>
 					<div>
 						<button>Hello world!</button>
 					</div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import styles from './styles';
+import stylesFactory from './styles';
 
 
 const CSMenu = React.createClass({
@@ -26,12 +26,19 @@ const CSMenu = React.createClass({
 		}
 	},
 
-	renderOpened() {
+	handleItemClick(item) {
+		return () => {
+			console.log(item);
+		};
+	},
+
+	renderOpened(styles) {
 		const { size, items } = this.props;
 
 		return (<svg style={styles.svg} width={this.width} height={this.height}>
-			<text x="50%" y="50%" style={styles.cancel} onClick={this.close}>Cancel</text>
-			{items.map((item, i) => <circle key={i} style={styles.circle(size, items.length, i)} onClick={(evt) =>{evt.preventDefault(); console.log(item);}} />)}
+			<circle style={styles.background} onClick={this.close}/>
+			<text x="50%" y="50%" style={styles.cancel} onClick={this.close}>CLOSE</text>
+			{items.map((item, i) => <circle key={i} style={styles.circle(items, i)} onClick={this.handleItemClick(item)} />)}
 		</svg>);
 	},
 
@@ -41,15 +48,17 @@ const CSMenu = React.createClass({
 
 	render() {
 		if (this.props.items.length < 1) {
-			throw new Error('CSMenu: Not enought items');
+			throw new Error('CSMenu: Not enough items');
 		}
 
 		if (React.Children.count(this.props.children) > 1) {
 			throw new Error('CSMenu: Too many children');
 		}
 
+		const styles = stylesFactory(this.props.size);
+
 		return (<div onClick={this.open} style={styles.wrapper}>
-			{this.state.opened ? this.renderOpened() : this.renderClosed()}
+			{this.state.opened ? this.renderOpened(styles) : this.renderClosed()}
 		</div>);
 	},
 });
